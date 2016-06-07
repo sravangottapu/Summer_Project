@@ -3,6 +3,7 @@ from  tkinter import *
 from tkinter import filedialog
 import os.path
 import getpass
+import socket
 from tkinter import messagebox
 sys.path.insert(0,'/home/'+getpass.getuser()+'/TextMiner/Processor')
 import namedEntity
@@ -293,6 +294,9 @@ class gui:
 
 
  def getPerson(self,widget):
+  ip = socket.gethostbyname(self.gethostbyname())
+  #if you want to connect to local database then in the place of 10.11.12.25 write ip
+  #for Main Server Ip write the ip in the place of 10.11.12.25
   db = MySQLdb.connect("10.11.12.25","root","","manual_annotations")
   cursor = db.cursor()
   sql = """SELECT name FROM annotations WHERE category = 'Person' """ 
