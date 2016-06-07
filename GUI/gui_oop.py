@@ -6,6 +6,7 @@ import getpass
 from tkinter import messagebox
 sys.path.insert(0,'/home/'+getpass.getuser()+'/TextMiner/Processor')
 import namedEntity
+import polyglotName
 import polyglotSent
 import partofSpeech
 import sentTokenize
@@ -54,7 +55,7 @@ class gui:
  
 
  def neButton(self,root):
-  neButton=Button(root,text="NE Miner",bg="red",command=self.namedEntity)
+  neButton=Button(root,text="NE Miner",bg="red",command=self.namedEntitychecker)
   neButton.pack()
  
 
@@ -84,6 +85,23 @@ class gui:
  def dictionaryButton(self,root):
   dictionaryButton = Button(root,text="Give Dictionary",bg="red",command=self.dictionary)
   dictionaryButton.pack()
+ 
+
+ def namedEntitychecker(self):
+  if hasattr(self,"name"):
+    if hasattr(self,"value"):
+      if(self.value==0):
+        self.namedEntity()
+        print("nltk")
+      else:
+        print("polyglot")
+        self.namedEntityPolyglot()
+    else:
+      self.namedEntity()
+  else:
+    content = "Please select a file"
+    messagebox.showinfo("Error! Ooops",content)
+
  def sentTokenizechecker(self):
   if hasattr(self, "name"):
     if hasattr(self, "value"):
@@ -98,6 +116,44 @@ class gui:
   else:
     content = "Please Select a File"
     messagebox.showinfo("Error! Oops",content)
+
+ def namedEntityPolyglot(self):
+  #polyglotName = Tk()
+  polyglotNameWin = Tk()
+  polyglotNameWin.title("Named Entity Recognition with  PolyGlot: "+self.name)
+  data = self.myText
+  name_array = polyglotName.polyNameTokenize(data)
+  #name_array = polyglotName.polyNameTokenize(data)
+  var = 1
+  count=1
+  string=""
+  for i in name_array:
+   if(i=="000000"):
+      var = 1
+      if(count!=1):
+        string = string + "\n"
+      else:
+        count = count+1
+        ac = ""
+   elif(var==1):
+      count = count + 1
+      i = i.split('-')
+      string = string +  i[1] + ":"
+      var = 0
+   else:
+      string = string + i + "\t"
+  print(string)
+  data = string
+  S = Scrollbar(polyglotNameWin)
+  T = Text(polyglotNameWin,height=20)
+  S.pack(side=RIGHT,fill=Y)
+  T.pack(expand = 1, fill= BOTH)
+  S.config(command=T.yview)
+  T.config(yscrollcommand=S.set)
+  T.insert(END,data)
+  T.config(state=DISABLED)
+  polyglotNameWin.mainloop()
+
 
  def sentTokenizePolyglot(self):
   polyglotsent = Tk()
