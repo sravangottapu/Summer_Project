@@ -11,6 +11,8 @@ import polyglotSent
 import partofSpeech
 import sentTokenize
 import wordTokenize
+import polyglotWord
+import polyglotSpeech
 import MySQLdb
 from functools import partial
 
@@ -60,7 +62,7 @@ class gui:
  
 
  def posButton(self,root):
-  posButton=Button(root,text="POS Tagger",bg="red",command=self.partofSpeech)
+  posButton=Button(root,text="POS Tagger",bg="red",command=self.partofSpeechchecker)
   posButton.pack()
  
 
@@ -70,7 +72,7 @@ class gui:
  
 
  def wtButton(self,root):
-  wtButton=Button(root,text="Word Tokenize",bg="red",command=self.wordTokenize)
+  wtButton=Button(root,text="Word Tokenize",bg="red",command=self.wordTokenizechecker)
   wtButton.pack()
 
  def manualButton(self,root):
@@ -86,6 +88,38 @@ class gui:
   dictionaryButton = Button(root,text="Give Dictionary",bg="red",command=self.dictionary)
   dictionaryButton.pack()
  
+
+ def wordTokenizechecker(self):
+  if hasattr(self,"name"):
+    if hasattr(self,"value"):
+      if(self.value==0):
+        self.wordTokenize()
+        print("nltk")
+      else:
+        print("Polyglot")
+        self.wordTokenizePolyglot()
+    else:
+      self.wordTokenize()
+  else:
+    content = "Please select a  file"
+    messagebox.showinfo("Error! Ooops",content)
+
+
+ def partofSpeechchecker(self):
+  if hasattr(self,"name"):
+    if hasattr(self,"value"):
+      if(self.value==0):
+        self.partofSpeech()
+        print("nltk")
+      else:
+        print("polyglot")
+        self.partofSpeechPolyglot()
+    else:
+      self.partofSpeech()
+  else:
+    content = "Please select a file"
+    messagebox.showinfo("Error Oops",content)
+
 
  def namedEntitychecker(self):
   if hasattr(self,"name"):
@@ -117,6 +151,49 @@ class gui:
     content = "Please Select a File"
     messagebox.showinfo("Error! Oops",content)
 
+ def wordTokenizePolyglot(self):
+  polyglotWordWin = Tk()
+  polyglotWordWin.title("Word Tokenization with Polyglot:"+self.name)
+  data = self.myText
+  word_array = polyglotWord.polyWordTokenize(data)
+  string=""
+  for i in word_array:
+    string = string + str(i) + "\n"
+  data = string
+  S = Scrollbar(polyglotWordWin)
+  T = Text(polyglotWordWin,height=20)
+  S.pack(side=RIGHT,fill=Y)
+  T.pack(expand = 1, fill= BOTH)
+  S.config(command=T.yview)
+  T.config(yscrollcommand=S.set)
+  T.insert(END,data)
+  T.config(state=DISABLED)
+  polyglotWordWin.mainloop()
+
+ def partofSpeechPolyglot(self):
+  polySpeechWin = Tk()
+  polySpeechWin.title("Part of Speech Tagging :"+self.name)
+  data = self.myText
+  speech_array = polyglotSpeech.polySpeechTokenize(data)
+  count = 1
+  string = ""
+  for i in speech_array:
+    if(count%2==1):
+      count = count + 1
+      string = string + str(i) + "\t"
+    else:
+      count = count + 1
+      string = string + str(i) + "\n"
+  data = string
+  S = Scrollbar(polySpeechWin)
+  T = Text(polySpeechWin,height=20)
+  S.pack(side=RIGHT,fill=Y)
+  T.pack(expand = 1, fill= BOTH)
+  S.config(command=T.yview)
+  T.config(yscrollcommand=S.set)
+  T.insert(END,data)
+  T.config(state=DISABLED)
+  polySpeechWin.mainloop()
  def namedEntityPolyglot(self):
   #polyglotName = Tk()
   polyglotNameWin = Tk()
@@ -216,7 +293,7 @@ class gui:
 
 
  def getPerson(self,widget):
-  db = MySQLdb.connect("localhost","root","","manual_annotations")
+  db = MySQLdb.connect("10.11.12.25","root","","manual_annotations")
   cursor = db.cursor()
   sql = """SELECT name FROM annotations WHERE category = 'Person' """ 
   cursor.execute(sql)
