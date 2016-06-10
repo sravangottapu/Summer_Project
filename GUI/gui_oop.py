@@ -294,10 +294,10 @@ class gui:
 
 
  def getPerson(self,widget):
-  ip = socket.gethostbyname(self.gethostbyname())
+  #ip = socket.gethostbyname(self.gethostbyname())
   #if you want to connect to local database then in the place of 10.11.12.25 write ip
   #for Main Server Ip write the ip in the place of 10.11.12.25
-  db = MySQLdb.connect("10.11.12.25","root","","manual_annotations")
+  db = MySQLdb.connect("localhost","root","","manual_annotations")
   cursor = db.cursor()
   sql = """SELECT name FROM annotations WHERE category = 'Person' """ 
   cursor.execute(sql)
@@ -458,7 +458,7 @@ class gui:
 
  def getText(self,manualWidget):
   text=self.entry_3.get()
-  self.highlight(text,manualWidget,"yellow",0)
+  self.highlight(text,manualWidget,"yellow",1)
 
 
  def highlight(self,text,widget,color,cond): #pass cond=1 if you want to recursively highlight a set of words from the text,else pass cond=0
@@ -469,7 +469,8 @@ class gui:
     first=widget.search(search,1.0,stopindex=END)
     widget.tag_configure("COLOR", background=color)
     if(cond==0):
-     widget.tag_remove("COLOR", 1.0, "end")
+     a = "sr"
+     #widget.tag_remove("COLOR", 1.0, "end")
     while first:
      row,col=first.split('.')
      col = int(col) + 1
@@ -489,9 +490,10 @@ class gui:
 
 
  def submit(self):
-  db = MySQLdb.connect("localhost","root","","manual_annotations")
-  cursor = db.cursor()
+  der = MySQLdb.connect("localhost","root","","manual_annotations")
+  cursor = der.cursor()
   var1 = self.entry_1.get()
+
   print(var1)
   var2 = self.entry_2.get()
   sql = "INSERT INTO annotations(name, \
@@ -499,7 +501,7 @@ class gui:
          VALUES ('%s','%s')" % \
          (var1,var2)
   cursor.execute(sql)
-  db.commit()
+  der.commit()
   self.manual_array.add(self.entry_1.get()+"~"+self.entry_2.get())
  
  def done(self):

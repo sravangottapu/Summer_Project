@@ -6,6 +6,4 @@ NLP based information extractor
 
 ###Welcome to the repository
 
-Feel free to contact: 
-G Sravan Kumar
-Ph:9085729716
+Feel free to contact: [My Facebook ID](https://www.facebook.com/profile.php?id=100008391880585&ref=bookmarks)
